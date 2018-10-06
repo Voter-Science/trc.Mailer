@@ -7,37 +7,26 @@ declare var it: any;
 var assert = require('chai').assert;
 
 // normal TypeScript imports. This compiles down to require(), but also imports type information.
-import * as trc from '../node_modules/trclib/trc2';
-import * as mock from '../node_modules/trclib/trc2mocks';
-import * as plugin from '../src/pluginmain';
-
-
-// Override methods in the Plugin class to make it more testable. 
-// a) disable UX calls, 
-// b) inject some asserts for testing. 
-class MyPluginX extends plugin.MyPlugin {
-    protected resetUi(): void {
-         // Nop - skip UI code. 
-    }
-
-    // virtual, this gets called from base class during a refresh.
-    // We're testing this gets called, and demonstrating using mocks.  
-    public updateInfo(info: trc.ISheetInfoResult): void {
-        // Assert!
-        assert.equal(mock.Sheet.DefaultName, info.Name);        
-    }
-}
+import { Household } from '../src/household'
 
 // Run tests 
-describe('sample test', function () {
-    var obj: plugin.MyPlugin;
-
-    it('creates plugin instance', function () {
-        var sheet: trc.Sheet = new mock.Sheet();
-        obj = new MyPluginX(sheet, null, null);
+describe('sample test', () => {
+    it('single', () => {
+        var h = new Household("a","c","z");
+        h.addName("Joe", "Smith");
+        assert.equal("Joe Smith", h.getName());
     });
-    it('double value ', function () {
-        assert.equal(10, obj.doubleit(5));
+    it('family', () => {
+        var h = new Household("a","c","z");
+        h.addName("Joe", "Smith");
+        h.addName("Mary", "Smith");
+        assert.equal("Joe & Mary Smith", h.getName());
+    });
+    it('different', () => {
+        var h = new Household("a","c","z");
+        h.addName("Joe", "Smith");
+        h.addName("Mary", "Jane");
+        assert.equal("Joe Smith & Mary Jane", h.getName());
     });
 });
 

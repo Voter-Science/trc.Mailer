@@ -88,6 +88,24 @@
             <p>Here is a downloadable CSV for households in this sheet:</p>
             <div id="download"></div>
         </div>
+
+        <p>
+            This will merge names at a given household. For example:
+            <table border="1">
+                <tr>
+                   <td></td><td>Names at house</td><td></td><td>Becomes this in mailer:</td>
+                </tr>
+                <tr>
+                   <td>(single name)</td><td>Peter Parker</td><td>--></td><td>Peter Parker</td>
+                </tr>
+                <tr>
+                    <td>(same last name)</td><td>Peter Parker, Mary Parker</td><td>--></td><td>Peter & Mary Parker</td>
+                </tr>
+                <tr>
+                    <td>(multiple names)</td><td>Peter Parker, Mary Jane</td><td>--></td><td>Peter Parker & Mary Jane</td>
+                </tr>
+            </table>
+        </p>
     </div>
 </body>
 

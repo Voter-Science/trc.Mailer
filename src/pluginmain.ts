@@ -20,6 +20,7 @@ import * as trchtml from 'trc-web/html'
 
 import * as bcl from 'trc-analyze/collections'
 import * as hh from 'trc-analyze/household'
+import { Household } from './household'
 
 
 // Installed via:
@@ -91,7 +92,10 @@ export class MyPlugin {
             catch(showError);
     }
 
-
+    // Merge logic: 
+    // "Joe Smith" --> "Joe Smith"
+    // "Joe Smith" + "Sue Smith" --> "Joe & Sue Smith"
+    // "Joe Smith" + "Sue Jones" --> "Joe Smith & Sue Jones"
     public static createMailList(contents: ISheetContents): ISheetContents {
         var x: hh.IHousheholding = new hh.Householding(contents);
 
@@ -102,34 +106,43 @@ export class MyPlugin {
         var colCity = contents[ColumnNames.City];
         var colZip = contents[ColumnNames.Zip];
 
-        var mailer: ISheetContents = {}
-
-        mailer[ColumnNames.FirstName] = colFirstName;
-        mailer[ColumnNames.LastName] = colLastName;
-        mailer[ColumnNames.Address] = colAddress;
-        mailer[ColumnNames.City] = colCity;
-        mailer[ColumnNames.Zip] = colZip;
-
-
-        var unique: any = {}
-
-        var count = 0;
-
-        var mailer2 = SheetContents.KeepRows(mailer, (i) => {
+        var households = new bcl.Dict<Household>();
+        for(var i = 0; i < colRecId.length; i++) {
             var hhid = hh.Householding.calcHHID(colAddress[i], colCity[i], colZip[i]);
 
-            if (unique.hasOwnProperty(hhid)) {
-                return false; // already present. 
-            } else {
-                unique[hhid] = true;
-                count++;
-                return true;
+            var h : Household = households.get(hhid);
+            if (h == undefined) 
+            {
+                h = new Household(colAddress[i], colCity[i], colZip[i]);
+                households.add(hhid, h);
             }
-        })
+
+            h.addName(colFirstName[i], colLastName[i]);
+        }
+
+        var mailer: ISheetContents = {}
+
+        var kName = "Name";
+        mailer[kName] = [];
+        mailer[ColumnNames.Address] = [];
+        mailer[ColumnNames.City] = [];
+        mailer[ColumnNames.Zip] = [];
+
+        households.forEach( (hhid, h) => {
+            mailer[kName].push(h.getName());
+            mailer[ColumnNames.Address].push(h._address);
+            mailer[ColumnNames.City].push(h._city);
+            mailer[ColumnNames.Zip].push(h._zip);
+        });
+
+
+        var count = households.getCount();
 
         $("#HouseholdCount").text(count.toLocaleString());
 
-        return mailer2;
-
+        return mailer;
     }
 }
+
+
+
