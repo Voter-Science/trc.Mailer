@@ -46,6 +46,15 @@ describe('sample test', () => {
         assert.equal("Joe Smith & Mary Jane", h.getName());
     });
 
+    it('different23', () => {
+        var h = new Household("a","c","z");
+        h.addName("Joe", "Jones");
+        h.addName("Joe", "Smith");
+        h.addName("Mary", "Smith");
+        h.addName("Ted", "Teddy");
+        assert.equal("Joe Jones & Smith Household & Ted Teddy", h.getName());
+    });
+
     it('different2', () => {
         var h = new Household("a","c","z");
         h.addName("Joe", "Smith");
@@ -54,6 +63,21 @@ describe('sample test', () => {
         assert.equal("Smith Household & Ted Teddy", h.getName());
     });
     
+    it('different24', () => {
+        var h = new Household("a","c","z");
+        h.addName("Joe", "Jones");
+        h.addName("Joe", "Smith");
+        h.addName("Mary", "Smith");
+        h.addName("Ted", "Teddy");
+        h.addName("Paul", "Teddy");
+        assert.equal("Joe Jones & Smith Household & Teddy Household", h.getNameWorker()); // too long
+    });
+
+    it('too_long', () => {
+        var h = new Household("a","c","z");
+        h.addName("Jsssssssssssssssssssssssssssssssssssssoe", "Jones");
+        assert.equal("Current Residents", h.getName()); // Too long
+    });
 
     it('different3', () => {
         var h = new Household("a","c","z");
@@ -61,7 +85,7 @@ describe('sample test', () => {
         h.addName("Mary", "Smith");
         h.addName("Ted", "Teddy");
         h.addName("Fred", "Teddy");
-        assert.equal("Smith Household & Teddy Household", h.getName());
+        assert.equal("Smith & Teddy Households", h.getName());
     });
 
     // Interleave order and makre sure we get same result. 
@@ -71,7 +95,19 @@ describe('sample test', () => {
         h.addName("Ted", "Teddy");
         h.addName("Mary", "Smith");
         h.addName("Fred", "Teddy");
-        assert.equal("Smith Household & Teddy Household", h.getName());
+        assert.equal("Smith & Teddy Households", h.getName());
+    });
+
+    it('different4', () => {
+        var h = new Household("a","c","z");
+        h.addName("Joe", "Smith");
+        h.addName("John", "Smith");
+        h.addName("Mary", "Smith");
+        h.addName("Ted", "Teddy");
+        h.addName("Fred", "Teddy");
+        h.addName("Fred", "Jones");
+        h.addName("Ted", "Jones");
+        assert.equal("Smith & Teddy & Jones Households", h.getName());
     });
 });
 

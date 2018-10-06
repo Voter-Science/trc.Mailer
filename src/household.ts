@@ -28,6 +28,17 @@ export class Household
     // "Joe Smith" + "Sue Jones" --> "Joe Smith & Sue Jones"
     public getName() : string 
     {
+        var x = this.getNameWorker();
+
+        // If names are too long, just give up. 
+        if (x.length > 40) {
+            // https://pe.usps.com/text/pub28/28c3_015.htm
+            return "Current Residents";
+        }
+        return x;
+    }
+    public getNameWorker() : string 
+    {
         if (this._firsts.length == 0)
         {
             return "";
@@ -38,8 +49,10 @@ export class Household
         }
 
         var Household = "Household";
+        var Households = "Households";
         if (this._firsts[0] == this._firsts[0].toUpperCase()) {
             Household = "HOUSEHOLD";
+            Households = "HOUSEHOLDS";
         }
 
         // If all lasts are the same. 
@@ -78,19 +91,33 @@ export class Household
             }
             firsts.push(first);
         }
+       
 
+        var onlyHouseholds = true;
         var name = "";
+        var name2 = ""; // last names 
         groups.forEach((last, firsts) => {
             if (name.length > 0) {
                 name += " & ";
             }
             if (firsts.length > 1) {
+                if (name2.length > 0) {
+                    name2 += " & ";
+                }
+                name2 += last;
                 name += last + " " + Household;
             }
             else {
+                onlyHouseholds = false;
                 name += firsts[0] + " " + last;
             }
         });
+
+        // If they're all households, then truncate it. 
+        // "A Household & B Household" --> "A & B Households";
+        if (onlyHouseholds) {
+            name = name2 + " " + Households;
+        }
 
         return name;
     }
