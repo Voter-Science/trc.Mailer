@@ -22,11 +22,56 @@ describe('sample test', () => {
         h.addName("Mary", "Smith");
         assert.equal("Joe & Mary Smith", h.getName());
     });
+    it('family3', () => {
+        var h = new Household("a","c","z");
+        h.addName("Joe", "Smith");
+        h.addName("Mary", "Smith");
+        h.addName("Paul", "Smith");
+        assert.equal("Smith Household", h.getName());
+    });
+
+    // If inputs are caps, then "Household" tag should be caps. 
+    it('family3Caps', () => {
+        var h = new Household("a","c","z");
+        h.addName("JOE", "SMITH");
+        h.addName("MARY", "SMITH");
+        h.addName("PAUL", "SMITH");
+        assert.equal("SMITH HOUSEHOLD", h.getName());
+    });
+
     it('different', () => {
         var h = new Household("a","c","z");
         h.addName("Joe", "Smith");
         h.addName("Mary", "Jane");
         assert.equal("Joe Smith & Mary Jane", h.getName());
+    });
+
+    it('different2', () => {
+        var h = new Household("a","c","z");
+        h.addName("Joe", "Smith");
+        h.addName("Mary", "Smith");
+        h.addName("Ted", "Teddy");
+        assert.equal("Smith Household & Ted Teddy", h.getName());
+    });
+    
+
+    it('different3', () => {
+        var h = new Household("a","c","z");
+        h.addName("Joe", "Smith");
+        h.addName("Mary", "Smith");
+        h.addName("Ted", "Teddy");
+        h.addName("Fred", "Teddy");
+        assert.equal("Smith Household & Teddy Household", h.getName());
+    });
+
+    // Interleave order and makre sure we get same result. 
+    it('different3order', () => {
+        var h = new Household("a","c","z");
+        h.addName("Joe", "Smith");        
+        h.addName("Ted", "Teddy");
+        h.addName("Mary", "Smith");
+        h.addName("Fred", "Teddy");
+        assert.equal("Smith Household & Teddy Household", h.getName());
     });
 });
 

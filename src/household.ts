@@ -1,3 +1,7 @@
+import * as bcl from 'trc-analyze/collections'
+
+// Friendly merge names.
+// IF they get too long, use "{LName} Household"
 export class Household
 {
     public constructor(address : string, city : string, zip : string) {
@@ -33,6 +37,11 @@ export class Household
             return this._firsts[0] + " " + this._lasts[0];
         }
 
+        var Household = "Household";
+        if (this._firsts[0] == this._firsts[0].toUpperCase()) {
+            Household = "HOUSEHOLD";
+        }
+
         // If all lasts are the same. 
         var same = true;
         var last1 = this._lasts[0];        
@@ -47,17 +56,42 @@ export class Household
 
         if (same == true) 
         {
+            // Keep it brief. 
+            if (this._firsts.length > 2) {
+                return last1 + " " + Household;
+            }
+
             return this._firsts.join(" & ") + " " + last1;
         }
 
-        // Differents
-        var name = "";
+        // Different last names
+        var groups = new bcl.Dict<string[]>();
+                
         for(var i in this._lasts) {
+            var first = this._firsts[i];
+            var last = this._lasts[i];
+
+            var firsts : string[] = groups.get(last);
+            if (!firsts) {
+                firsts = [];
+                groups.add(last, firsts);
+            }
+            firsts.push(first);
+        }
+
+        var name = "";
+        groups.forEach((last, firsts) => {
             if (name.length > 0) {
                 name += " & ";
             }
-            name += this._firsts[i] + " " + this._lasts[i];
-        }
+            if (firsts.length > 1) {
+                name += last + " " + Household;
+            }
+            else {
+                name += firsts[0] + " " + last;
+            }
+        });
+
         return name;
     }
 }
