@@ -74,7 +74,10 @@ export class MyPlugin {
                 var mailList = MyPlugin.createMailList(contents);
 
                 var e = document.getElementById("download");
-                trchtml.DownloadHelper.appendDownloadCsvButton(e, () => mailList);
+                trchtml.DownloadHelper.appendDownloadCsvButton(e, () => {
+                    this._sheet.postExport("mailer"); // Async call to log there was an export 
+                    return mailList
+                });
             })
         });
     }
